@@ -1,5 +1,7 @@
 package assistant;
 
+import java.util.concurrent.locks.Condition;
+
 import misc.Exam;
 import misc.ExamStack;
 import misc.ExamState;
@@ -9,10 +11,9 @@ public class Assistant extends Thread {
 	private ExamStack stackTODO;
 	private ExamStack stackPASSON;
 	private ExamStack stackCorrected;
+	private Condition alertProf;
 	
 	private int exercise;
-	private boolean finished = false;
-
 	
 	public Assistant(ExamStack toDO, ExamStack passON,ExamStack corrected, int exercise) {
 		this.stackTODO = toDO;
@@ -68,13 +69,15 @@ public class Assistant extends Thread {
 		}
 		if (examToCorrect.getState() != ExamState.IN_PROGRES) {
 			synchronized (stackCorrected) {
-				stackCorrected.addLast(examToCorrect);	
+				stackCorrected.addLast(examToCorrect);
+				alertProf.signalAll();
 //				System.out.println("exam corrected: " + stackCorrected.size());
 			}
 		} else {
 			examToCorrect.correct(exercise);
 			synchronized (stackPASSON) {
 				stackPASSON.addLast(examToCorrect);
+				alertProf.signalAll();
 			}
 		}
 	}
@@ -98,4 +101,7 @@ public class Assistant extends Thread {
 			System.out.println("Feierabend für " + Thread.currentThread().getName());
 	}
 
+	public void setAlertProf(Condition alertProf) {
+		this.alertProf = alertProf;
+	}
 }

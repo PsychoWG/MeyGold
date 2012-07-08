@@ -1,13 +1,13 @@
 package main;
 
-import java.util.Arrays;
-
-import professor.Professor;
-
-import assistant.Assistant;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.concurrent.locks.Condition;
 
 import misc.Exam;
 import misc.ExamStack;
+import professor.Professor;
+import assistant.Assistant;
 
 public class Start {
 	
@@ -31,17 +31,24 @@ public class Start {
 		ExamStack corrected = new ExamStack();
 		ExamStack finished = new ExamStack();
 		
-		Assistant[] assistants = new Assistant[NUM_ASSISTANTS];
+		// Da die Korrekturzeit mit dem HashWert skaliert, sollte man den Prof zuerst implementieren,
+		// damit er den kleineren hat und schneller wird.
+		Professor professor = new Professor(corrected, finished);
+		
+		List<Assistant> assistants = new LinkedList<Assistant>();
 		for (int i = 0; i < NUM_ASSISTANTS; i ++) {
-			assistants[i] = new Assistant(stacks[i % NUM_ASSISTANTS], stacks[(i+1) % NUM_ASSISTANTS], corrected, i);
+			assistants.add(new Assistant(stacks[i % NUM_ASSISTANTS], stacks[(i+1) % NUM_ASSISTANTS], corrected, i));
 		}
 		
-//		Professor professor = new Professor(corrected, finished, NUM_EXAMS);
-		
+		Condition profAlert = professor.getDatFreakingCondition(assistants);
+
+		for (int i = 0; i < NUM_ASSISTANTS; i ++) {
+			assistants.get(i).setAlertProf(profAlert);
+		}
 //		professor.start();
 		long now = System.nanoTime();
-		for (int i = 0; i < assistants.length; i++) {
-			assistants[i].start();
+		for (int i = 0; i < assistants.size(); i++) {
+			assistants.get(i).start();
 		}
 		synchronized (corrected) {
 			while (corrected.size() != NUM_EXAMS){
@@ -53,9 +60,10 @@ public class Start {
 			}	
 		}
 		for (int i = 0; i < NUM_ASSISTANTS; i ++) {
-			synchronized (assistants[i]) {
-				assistants[i].interrupt();
-				assistants[i].notifyAll();
+			Assistant current = assistants.get(i);
+			synchronized (current) {
+				current.interrupt();
+				current.notifyAll();
 				System.out.println("Thread[" + i + "] wird freundlichst gebeten, sich zu terminieren!");
 			}
 		}
