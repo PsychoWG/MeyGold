@@ -24,7 +24,7 @@ public class Start {
 //			Arrays.fill(exams, new Exam(NUM_ASSISTANTS));
 			ExamStack current = new ExamStack();
 			for (int n = 0; n < NUM_EXAMS/NUM_ASSISTANTS; n++) {
-				current.push(new Exam(NUM_ASSISTANTS));
+				current.enqueue(new Exam(NUM_ASSISTANTS));
 			}
 			stacks[i] = current;
 		}

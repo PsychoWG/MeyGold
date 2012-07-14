@@ -1,21 +1,63 @@
 package misc;
 
+import java.util.Collection;
 import java.util.LinkedList;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.ReentrantLock;
 
 
-public class ExamStack extends LinkedList<Exam> {
+public class ExamStack {
 
-	private static final long serialVersionUID = 8241504363882092462L;
-
-	@Override
-	public void addLast(Exam e) {
-		super.addLast(e);
-		notifyAll();
+	private LinkedList<Exam> stack;
+	
+	private Boolean tailing = false;
+	
+	private Condition cond = new ReentrantLock().newCondition();
+	
+	public ExamStack() {
+		stack = new LinkedList<Exam>();
 	}
 	
-	@Override
-	public synchronized Exam pollFirst() {
-		return super.pollFirst();
+	public ExamStack(Collection<Exam> exams) {
+		stack = new LinkedList<Exam>();
+		stack.addAll(exams);
+	}
+	
+	public void enqueue(Exam e) {
+		stack.addLast(e);
+		notify();
+	}
+	
+	public Exam dequeue() {
+		synchronized (tailing) {
+			while (tailing) {
+				try {
+					cond.await();
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		return stack.pollFirst();
+	}
+	
+	public LinkedList<Exam> tail() {
+		LinkedList<Exam>  result = new LinkedList<Exam>();
+		synchronized (tailing) {
+			tailing = true;
+			if (stack.size() > 1) {
+				result.addAll(stack);
+				result.remove(stack.getFirst());
+				stack.removeAll(result);
+			}
+			tailing = false;
+			cond.signal();
+		}
+		return result;
+	}
+	
+	public int size() {
+		return stack.size();
 	}
 //	private Lock lock;
 //	private Condition empty;

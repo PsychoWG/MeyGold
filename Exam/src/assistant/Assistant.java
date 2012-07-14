@@ -61,24 +61,18 @@ public class Assistant extends Thread {
 	
 	private void correct() throws InterruptedException {
 		Exam examToCorrect = null;
-		synchronized (stackTODO) {
-			while (stackTODO.isEmpty()) {
-				stackTODO.wait(100);
-			}
-			examToCorrect = stackTODO.pollFirst();
+		while (stackTODO.size() > 0) {
+			stackTODO.wait();
 		}
+		examToCorrect = stackTODO.dequeue();
 		if (examToCorrect.getState() != ExamState.IN_PROGRES) {
-			synchronized (stackCorrected) {
-				stackCorrected.addLast(examToCorrect);
-				alertProf.signalAll();
+			stackCorrected.enqueue(examToCorrect);
+			alertProf.signalAll();
 //				System.out.println("exam corrected: " + stackCorrected.size());
-			}
 		} else {
 			examToCorrect.correct(exercise);
-			synchronized (stackPASSON) {
-				stackPASSON.addLast(examToCorrect);
-				alertProf.signalAll();
-			}
+			stackPASSON.enqueue(examToCorrect);
+			alertProf.signalAll();
 		}
 	}
 
