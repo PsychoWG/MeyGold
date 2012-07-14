@@ -25,9 +25,7 @@ public class Assistant extends Thread {
 	}
 	
 	public boolean gotWork() {
-		synchronized (stackTODO) {
-			return stackTODO.size() > 0;	
-		}
+		return stackTODO.size() > 0;	
 	}
 	
 	
@@ -52,19 +50,22 @@ public class Assistant extends Thread {
 	private void correct() throws InterruptedException {
 		Exam examToCorrect = null;
 		synchronized (wait) {
-			while (stackTODO.size() > 0) {
+			while (stackTODO.size() == 0) {
 				wait.wait();	
 			}
 		}
 		examToCorrect = stackTODO.dequeue();
-		if (examToCorrect.getState() != ExamState.IN_PROGRES) {
-			stackCorrected.enqueue(examToCorrect);
-			alertProf.signalAll();
-//				System.out.println("exam corrected: " + stackCorrected.size());
-		} else {
-			examToCorrect.correct(exercise);
-			stackPASSON.enqueue(examToCorrect);
-			alertProf.signalAll();
+		synchronized (alertProf) {
+			if (examToCorrect.getState() != ExamState.IN_PROGRES) {
+				stackCorrected.enqueue(examToCorrect);
+				alertProf.notify();
+	//				System.out.println("exam corrected: " + stackCorrected.size());
+			} else {
+				System.out.println("Kaese");
+				examToCorrect.correct(exercise);
+				stackPASSON.enqueue(examToCorrect);
+				alertProf.notify();
+			}
 		}
 	}
 

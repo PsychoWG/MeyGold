@@ -55,8 +55,10 @@ public class Professor implements Runnable{
 	public void run() {
 		while(!Thread.interrupted()) {
 			try{
-				while(stackcorrected.size() > 0) {
-					alert.await();
+				synchronized (alert) {
+					while(stackcorrected.size() == 0) {
+						alert.await();
+					}
 				}
 				if (stackcorrected.size() > 0) {
 					finishExam(stackcorrected.dequeue());
@@ -79,6 +81,7 @@ public class Professor implements Runnable{
 		synchronized (pollFirst) {
 			pollFirst.finish();
 			stackfinished.enqueue(pollFirst);
+			System.out.println(stackfinished.size());
 		}
 		synchronized (this) {
 			synchronized (wantShuffle) {

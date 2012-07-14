@@ -35,7 +35,7 @@ public class Start {
 		// damit er den kleineren hat und schneller wird.
 		Professor professor = new Professor(corrected, finished);
 		
-		Condition wait = corrected.getWait();
+		Condition wait = finished.getWait();
 		
 		List<Assistant> assistants = new LinkedList<Assistant>();
 		for (int i = 0; i < NUM_ASSISTANTS; i ++) {
@@ -54,7 +54,7 @@ public class Start {
 		}
 			synchronized (wait) {
 				try {
-					while (corrected.size() != NUM_EXAMS){
+					while (finished.size() != NUM_EXAMS){
 						wait.wait();
 					}	
 				} catch (InterruptedException e) {
