@@ -46,6 +46,10 @@ public class Professor implements Runnable{
 	}
 	// TODO implement CheckAll for b)
 	
+	public void checkForFeierabend() {
+		// PENIS
+	}
+	
 	
 	@Override
 	public void run() {
