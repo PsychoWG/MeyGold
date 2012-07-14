@@ -74,9 +74,7 @@ public class Professor implements Runnable{
 	private void finishExam(Exam pollFirst) {
 		synchronized (pollFirst) {
 			pollFirst.finish();
-			synchronized (stackfinished) {
-				stackfinished.enqueue(pollFirst);
-			}
+			stackfinished.enqueue(pollFirst);
 		}
 		synchronized (this) {
 			synchronized (wantShuffle) {

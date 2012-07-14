@@ -12,7 +12,7 @@ import assistant.Assistant;
 public class Start {
 	
 	public static final int NUM_ASSISTANTS = 10;
-	public static final int NUM_EXAMS = 1000;
+	public static final int NUM_EXAMS = 1000000;
 	// TROLOLOLOLOLOOLOLOOLOLOLOLOL
 	
 	public Start() {
@@ -35,6 +35,8 @@ public class Start {
 		// damit er den kleineren hat und schneller wird.
 		Professor professor = new Professor(corrected, finished);
 		
+		Condition wait = corrected.getWait();
+		
 		List<Assistant> assistants = new LinkedList<Assistant>();
 		for (int i = 0; i < NUM_ASSISTANTS; i ++) {
 			assistants.add(new Assistant(stacks[i % NUM_ASSISTANTS], stacks[(i+1) % NUM_ASSISTANTS], corrected, i));
@@ -50,15 +52,15 @@ public class Start {
 		for (int i = 0; i < assistants.size(); i++) {
 			assistants.get(i).start();
 		}
-		synchronized (corrected) {
-			while (corrected.size() != NUM_EXAMS){
+			synchronized (wait) {
 				try {
-					corrected.wait();
+					while (corrected.size() != NUM_EXAMS){
+						wait.wait();
+					}	
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}	
 			}	
-		}
 		for (int i = 0; i < NUM_ASSISTANTS; i ++) {
 			Assistant current = assistants.get(i);
 			synchronized (current) {

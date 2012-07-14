@@ -25,8 +25,8 @@ public class ExamStack {
 	}
 	
 	public void enqueue(Exam e) {
-		stack.addLast(e);
 		synchronized (wait) {
+			stack.addLast(e);
 			wait.notify();			
 		}
 	}

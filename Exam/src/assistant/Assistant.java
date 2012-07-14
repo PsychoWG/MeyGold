@@ -51,8 +51,8 @@ public class Assistant extends Thread {
 	
 	private void correct() throws InterruptedException {
 		Exam examToCorrect = null;
-		while (stackTODO.size() > 0) {
-			synchronized (wait) {
+		synchronized (wait) {
+			while (stackTODO.size() > 0) {
 				wait.wait();	
 			}
 		}
@@ -75,9 +75,7 @@ public class Assistant extends Thread {
 					if (gotWork()) {
 						correct();
 					} else {
-							synchronized (stackTODO) {
-								stackTODO.wait();
-							}
+							stackTODO.wait();
 					}
 				} catch (InterruptedException e) {
 					// TODO ask prof for termination
