@@ -12,57 +12,49 @@ public class Assistant extends Thread {
 	private ExamStack stackPASSON;
 	private ExamStack stackCorrected;
 	private Condition alertProf;
+	private Condition wait;
 	
 	private int exercise;
 	
 	public Assistant(ExamStack toDO, ExamStack passON,ExamStack corrected, int exercise) {
 		this.stackTODO = toDO;
+		wait = stackTODO.getWait();
 		this.stackPASSON = passON;
 		this.stackCorrected = corrected;
 		this.exercise = exercise;
 	}
 	
-	public synchronized boolean gotWork() {
+	public boolean gotWork() {
 		synchronized (stackTODO) {
 			return stackTODO.size() > 0;	
 		}
 	}
 	
 	
-	public synchronized ExamStack getStackTODO() {
-		synchronized (stackTODO) {
-			return stackTODO;	
-		}
+	public ExamStack getStackTODO() {
+		return stackTODO;	
 	}
 
-	public synchronized void setStackTODO(ExamStack stackTODO) {
-		synchronized (this.stackTODO) {
-			synchronized (stackTODO) {
-				this.stackTODO.notifyAll();
-				this.stackTODO = stackTODO;
-				stackTODO.notifyAll();	
-			}
-		}
+	public void setStackTODO(ExamStack stackTODO) {
+			this.stackTODO.notify();
+			this.stackTODO = stackTODO;
+			stackTODO.notifyAll();	
 	}
 
-	public synchronized ExamStack getStackPASSON() {
-		synchronized (stackPASSON) {
-			return stackPASSON;	
-		}
+	public ExamStack getStackPASSON() {
+		return stackPASSON;	
 	}
 
-	public synchronized void setStackPASSON(ExamStack stackPASSON) {
-		synchronized (this.stackPASSON) {
-			synchronized (stackPASSON) {
-				this.stackPASSON = stackPASSON;
-			}
-		}
+	public void setStackPASSON(ExamStack stackPASSON) {
+		this.stackPASSON = stackPASSON;
 	}
 	
 	private void correct() throws InterruptedException {
 		Exam examToCorrect = null;
 		while (stackTODO.size() > 0) {
-			stackTODO.wait();
+			synchronized (wait) {
+				wait.wait();	
+			}
 		}
 		examToCorrect = stackTODO.dequeue();
 		if (examToCorrect.getState() != ExamState.IN_PROGRES) {

@@ -13,6 +13,7 @@ public class ExamStack {
 	private Boolean tailing = false;
 	
 	private Condition cond = new ReentrantLock().newCondition();
+	private Condition wait = new ReentrantLock().newCondition();
 	
 	public ExamStack() {
 		stack = new LinkedList<Exam>();
@@ -25,7 +26,9 @@ public class ExamStack {
 	
 	public void enqueue(Exam e) {
 		stack.addLast(e);
-		notify();
+		synchronized (wait) {
+			wait.notify();			
+		}
 	}
 	
 	public Exam dequeue() {
@@ -58,6 +61,10 @@ public class ExamStack {
 	
 	public int size() {
 		return stack.size();
+	}
+	
+	public Condition getWait() {
+		return wait;
 	}
 //	private Lock lock;
 //	private Condition empty;
