@@ -48,6 +48,8 @@ public class Professor implements Runnable{
 	
 	public void checkForFeierabend() {
 		// PENIS
+		// wird immer laenger
+		// kann nichts dagegen tun
 	}
 	
 	
