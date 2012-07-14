@@ -12,7 +12,7 @@ import assistant.Assistant;
 public class Start {
 	
 	public static final int NUM_ASSISTANTS = 10;
-	public static final int NUM_EXAMS = 1000000;
+	public static final int NUM_EXAMS = 1000;
 	// TROLOLOLOLOLOOLOLOOLOLOLOLOL
 	
 	public Start() {
@@ -47,7 +47,7 @@ public class Start {
 		for (int i = 0; i < NUM_ASSISTANTS; i ++) {
 			assistants.get(i).setAlertProf(profAlert);
 		}
-//		professor.start();
+		professor.start();
 		long now = System.nanoTime();
 		for (int i = 0; i < assistants.size(); i++) {
 			assistants.get(i).start();

@@ -98,6 +98,8 @@ public class Exam {
 			// und danach einfuegen.
 			exercises[exercise] = true;
 			updateExamState();
+		} else {
+			updateExamState();
 		}
 
 	}
@@ -109,7 +111,6 @@ public class Exam {
 			}
 		}
 		state = ExamState.CORRECTED;
-
 	}
 
 	public synchronized ExamState getState() {

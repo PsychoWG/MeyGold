@@ -57,11 +57,13 @@ public class Assistant extends Thread {
 		examToCorrect = stackTODO.dequeue();
 		synchronized (alertProf) {
 			if (examToCorrect.getState() != ExamState.IN_PROGRES) {
+				examToCorrect.correct(exercise);
+				System.out.println("wurscht");
 				stackCorrected.enqueue(examToCorrect);
+				
 				alertProf.notify();
 	//				System.out.println("exam corrected: " + stackCorrected.size());
 			} else {
-				System.out.println("Kaese");
 				examToCorrect.correct(exercise);
 				stackPASSON.enqueue(examToCorrect);
 				alertProf.notify();
@@ -76,7 +78,9 @@ public class Assistant extends Thread {
 					if (gotWork()) {
 						correct();
 					} else {
-							stackTODO.wait();
+						synchronized (wait) {
+							wait.wait();
+						}
 					}
 				} catch (InterruptedException e) {
 					// TODO ask prof for termination

@@ -10,7 +10,7 @@ import misc.Exam;
 import misc.ExamStack;
 import assistant.Assistant;
 
-public class Professor implements Runnable{
+public class Professor extends Thread {
 
 	private final ExamStack stackcorrected;
 	private final ExamStack stackfinished;
@@ -59,10 +59,12 @@ public class Professor implements Runnable{
 			try{
 				synchronized (alert) {
 					while(stackcorrected.size() == 0) {
-						alert.await();
+						System.out.println("bin müd");
+						alert.wait();
 					}
 				}
 				if (stackcorrected.size() > 0) {
+					System.out.println("leverwurscht");
 					finishExam(stackcorrected.dequeue());
 				} else {
 					startShuffling();
