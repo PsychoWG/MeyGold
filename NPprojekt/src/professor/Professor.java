@@ -21,8 +21,6 @@ public class Professor extends Thread {
 		this.assistants = assistants;
 	}
 
-	// TODO implement CheckAll for b)
-
 	public boolean checkAssistantsForWork() {
 		boolean gotWork = true;
 		boolean checkAll = true;
@@ -55,12 +53,16 @@ public class Professor extends Thread {
 			try {
 				boolean waitForWork = false;
 				if (stackcorrected.isEmpty()) {
-					waitForWork = startShuffling();
+					waitForWork = !startShuffling();
 				} else {
 					examToFinish = stackcorrected.dequeue();
 					finishExam(examToFinish);
+					startShuffling();
 				}
 				if (waitForWork) {
+					if (isInterrupted()) {
+						break;
+					}
 					examToFinish = stackcorrected.dequeue();
 					finishExam(examToFinish);
 				}
@@ -75,7 +77,7 @@ public class Professor extends Thread {
 	private boolean startShuffling() {
 		boolean shuffling = !checkAssistantsForWork();
 		if (!shuffling) {
-			return shuffling;
+			return true;
 		} else {
 			System.out.println("Everyday I'm shuffling!");
 		}
