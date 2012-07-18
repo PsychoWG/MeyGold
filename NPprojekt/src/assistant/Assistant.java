@@ -15,15 +15,17 @@ public class Assistant extends Thread {
 	private CyclicBarrier barrier;
 
 	private int exercise;
+	private boolean working;
 
-	public Assistant(CyclicBarrier barrier, ExamStack toDO, ExamStack passON, ExamStack corrected,
-			int exercise) {
+	public Assistant(CyclicBarrier barrier, ExamStack toDO, ExamStack passON,
+			ExamStack corrected, int exercise) {
 		setName("Assistent " + exercise);
 		this.stackTODO = toDO;
 		this.stackPASSON = passON;
 		this.stackCorrected = corrected;
 		this.exercise = exercise;
 		this.barrier = barrier;
+		working = true;
 	}
 
 	public boolean gotWork() {
@@ -48,7 +50,9 @@ public class Assistant extends Thread {
 
 	private void correct() throws InterruptedException {
 		Exam examToCorrect = null;
+		working = false;
 		examToCorrect = stackTODO.dequeue();
+		working = true;
 		if (examToCorrect != null) {
 			examToCorrect.correct(exercise);
 			if (examToCorrect.getState().equals(ExamState.CORRECTED)) {
@@ -57,6 +61,10 @@ public class Assistant extends Thread {
 				stackPASSON.enqueue(examToCorrect);
 			}
 		}
+	}
+
+	public boolean isWorking() {
+		return working || stackTODO.size() > 0;
 	}
 
 	@Override
@@ -69,15 +77,15 @@ public class Assistant extends Thread {
 			e1.printStackTrace();
 		}
 		System.out.println("Assistent " + exercise + " starts working");
+		working = true;
 		while (!(isInterrupted())) {
 			try {
 				correct();
 			} catch (InterruptedException e) {
-				// TODO ask prof for termination
+				System.out.println(Thread.currentThread().getName()
+						+ " finished!");
 				break;
 			}
 		}
-		System.out
-				.println(Thread.currentThread().getName() + " finished!");
 	}
 }

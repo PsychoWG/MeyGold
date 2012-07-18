@@ -24,29 +24,38 @@ public class Professor extends Thread {
 
 	// TODO implement CheckAll for b)
 
-	public void checkForFeierabend() {
+	public void checkAssistants() {
+		for (Assistant assistant : assistants) {
+			if (assistant.isWorking()) {
+				return;
+			}
+		}
 		int i = 0;
 		for (Assistant assistant : assistants) {
 			assistant.interrupt();
-			System.out.println("Assistent[" + i 
-					+ "] stop working!");
+			System.out.println("Assistent[" + i + "] stop working!");
 			i++;
 		}
+		System.out.println("i gonna kill myself now!");
+		interrupt();
 	}
 
 	@Override
 	public void run() {
-		while (stackfinished.size() != Start.NUM_EXAMS) {
+		while (!isInterrupted()) {
 			Exam examToFinish = null;
 			try {
-				examToFinish = stackcorrected.dequeue();
-			finishExam(examToFinish);
+				if (stackcorrected.isEmpty()) {
+					checkAssistants();
+				} else {
+					examToFinish = stackcorrected.dequeue();
+					finishExam(examToFinish);
+				}
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
-		checkForFeierabend();
 		System.out.println("Professor stop working");
 	}
 
