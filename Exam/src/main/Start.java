@@ -13,7 +13,6 @@ public class Start {
 	
 	public static final int NUM_ASSISTANTS = 10;
 	public static final int NUM_EXAMS = 1000;
-	// TROLOLOLOLOLOOLOLOOLOLOLOLOL
 	
 	public Start() {
 		ExamStack[] stacks = new ExamStack[NUM_ASSISTANTS];
