@@ -71,6 +71,7 @@ public class Assistant extends Thread {
 		Exam examToCorrect = null;
 		working = false;
 		examToCorrect = stackTODO.dequeue();
+		checked = false;
 		working = true;
 		if (examToCorrect != null) {
 			examToCorrect.correct(exercise);

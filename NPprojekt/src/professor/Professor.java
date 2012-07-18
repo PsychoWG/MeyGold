@@ -50,16 +50,31 @@ public class Professor extends Thread {
 		boolean gotWork = true;
 		boolean checkAll = true;
 		for (int i = assistants.size(); i > 0; i--) {
-			Assistant ass = assistants.get(i-1);
-			gotWork = gotWork ? ass.isWorking() : gotWork;
-			if (ass.isWorking()) {
+			Assistant assistant = assistants.get(i-1);
+			gotWork = gotWork ? assistant.isWorking() : gotWork;
+			if (assistant.isWorking()) {
 				checkAll = false;
+			}
+			if (!gotWork && checkAll) {
+				assistant.setChecked(true);
 			}
 		}
 		if (!checkAll) {
 			return gotWork;
 		}
 		
+		boolean reallyRdy = true;
+		for (int i = assistants.size(); i > 0; i--) {
+			Assistant assistant = assistants.get(i-1);
+			boolean current = assistant.isChecked();
+			if (!current) {
+				reallyRdy = false;
+			}
+			assistant.setChecked(false);
+		}
+		if (!reallyRdy) {
+			return gotWork;
+		}
 		int i = 0;
 		for (Assistant assistant : assistants) {
 			assistant.interrupt();
@@ -118,8 +133,8 @@ public class Professor extends Thread {
 	 */
 	private void shuffle() {
 		LinkedList<Exam> toShuffle = new LinkedList<Exam>();
-		for (Assistant ass : assistants) {
-			List<Exam> current = ass.getStackTODO().tail();
+		for (Assistant assistant : assistants) {
+			List<Exam> current = assistant.getStackTODO().tail();
 			if (current != null) {
 				toShuffle.addAll(current);
 			}
