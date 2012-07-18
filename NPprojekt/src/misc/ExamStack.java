@@ -3,7 +3,6 @@ package misc;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
@@ -20,15 +19,15 @@ public class ExamStack {
 	private Condition empty = lock.newCondition();
 
 	/**
-	 * creates a new empty exam stack 
+	 * Erzeugt einen neuen leeren exam stack
 	 */
 	public ExamStack() {
 		stack = new ConcurrentLinkedQueue<Exam>();
 	}
 
 	/**
-	 * creates a new exam stack with the given exams
-	 * @param exams the exams to add to the stack
+	 * Erzeugt einen neuen exam stack und füllt ihn
+	 * @param exams exams mit der der exam stack befüllt wird
 	 */
 	public ExamStack(Collection<Exam> exams) {
 		stack = new ConcurrentLinkedQueue<Exam>();
@@ -36,9 +35,9 @@ public class ExamStack {
 	}
 
 	/**
-	 * adds an element to the top of the stack
+	 * fügt ein element oben auf den stack ein
 	 * 
-	 * @param e the element to add
+	 * @param e exam das hinzugefügt werden soll
 	 */
 	public void enqueue(Exam e) {
 			stack.add(e);
@@ -51,15 +50,15 @@ public class ExamStack {
 		}
 	}
 	/**
-	 * removes and returns the first element of the stack
-	 * @return the first element of the stack
-	 * @throws InterruptedException if the current thread is interupted while waiting
+	 * entfernt das erste element aus dem stack und gibt es zurück
+	 * @return das erste element des stacks
+	 * @throws InterruptedException wenn der aufrufene thread während des wartens unterbrochen wird
 	 */
 	public Exam dequeue() throws InterruptedException {
 		Exam ex = null;
 		try {
 			lock.lock();
-			//wait if there is no element in this stack
+			//wenn kein element im stack ist warten
 			while (stack.isEmpty()) {
 				empty.await();
 			}
@@ -91,7 +90,7 @@ public class ExamStack {
 	}
 	/**
 	 * 
-	 * @return the size of this stack
+	 * @return die größe des stacks
 	 */
 	public int size() {
 		return stack.size();
@@ -99,7 +98,7 @@ public class ExamStack {
 	
 	/**
 	 * 
-	 * @return true if the stack is empty false otherwise
+	 * @return wahr wenn der stack leer ist ansonsten falsch
 	 */
 	public boolean isEmpty() {
 		return stack.isEmpty();

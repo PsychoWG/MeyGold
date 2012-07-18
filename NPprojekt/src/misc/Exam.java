@@ -15,14 +15,14 @@ package misc;
 
 public class Exam {
 
-	//Exam states: IN_PROGRES initial state
-	//			   CORECTED all exercises corrected by assistants
-	//			   FINISHED all exercises corrected and corrected by professor
+	//Exam states: IN_PROGRES Anfangszustand
+	//			   CORECTED alle Aufgaben korrigiert
+	//			   FINISHED alle Aufgaben korrigiert und Professor endkorrektur fertig
 	private ExamState state;
 
-	// flag for each exercise
-	// false not corrected
-	// true corrected
+	// flag für jede Aufgabe
+	// false nicht korrigiert
+	// true korrigiert
 	private boolean[] exercises;
 
 	/*
@@ -31,11 +31,12 @@ public class Exam {
 	private static final int scale_correct = 1000000;
 	private static final int scale_finish = 100000;
 	/**
-	 * Creates a new exam
+	 * Erzeugt ein neues exam
 	 * 
-	 * @param exercises the number of exercises for this exam
-	 * 			according to the project description, the number of exercises 
-	 * 			is equal to the number of assistants
+	 * @param exercises Die Anzahl der Aufgaben des exams	
+	 * 					Nach Aufgabenstellung entsprechen die Anzahl der Aufgaben 
+	 * 					der Anzahl der Studenten. 
+	 * 			
 	 */
 	public Exam(int exercises) {
 		state = ExamState.IN_PROGRES;
@@ -97,13 +98,13 @@ public class Exam {
 		spend_time(i * (i + 12345), scale_finish);
 	}
 	/**
-	 * corrects an exercise of this exam
-	 * this method is called by assistants to correct their exercises 
+	 * Korrigiert eine Aufgabe
+	 * wird von Assistenten benutzt 
 	 * 
-	 * @param exercise the exercise to correct
+	 * @param exercise die Nummer der Aufgabe die korrigiert wird
 	 */
 	public synchronized void correct(int exercise) {
-		//check if this exercise is already corrected
+		//prüfen ob die Aufgabe schon korrigiert wurde
 		if (!exercises[exercise]) {
 			 Exam.do_correction(); // Beansprucht Prozessorleistung und
 			// Speicher. Dieser Aufruf muss
@@ -119,8 +120,8 @@ public class Exam {
 
 	}
 	/**
-	 * updates the state of this exam
-	 * if all exercises are corrected, the exam is corrected -> state CORRECTED
+	 * Prüft den aktuellen Zustand des exams
+	 * sind alle Aufgaben korrigiert wird der Status auf CORRECTED gesetzt
 	 */
 	public synchronized void updateExamState() {
 		for (boolean exercise : exercises) {
@@ -132,15 +133,15 @@ public class Exam {
 	}
 
 	/**
-	 * @return the current state of this exam
+	 * @return den momentanen Zustand des exams
 	 */
 	public synchronized ExamState getState() {
 		return state;
 	}
 	/**
-	 * final correction for this exam
-	 * this method is called by the professor to finish the exam
-	 * state -> FINISHED
+	 * Endkorrektur
+	 * wird vom Professor benutzt um das exam fertigzustellen
+	 * Zustand wird auf FINISHED gesetzt
 	 */
 	public void finish() {
 		 Exam.do_finish(); // Beansprucht Prozessorleistung und
