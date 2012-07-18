@@ -12,7 +12,7 @@ import assistant.Assistant;
 public class Start {
 	
 	public static final int NUM_ASSISTANTS = 2;
-	public static final int NUM_EXAMS = 800;
+	public static final int NUM_EXAMS = 200;
 	
 	public Start() {
 		long start = System.currentTimeMillis();
@@ -49,16 +49,20 @@ public class Start {
 			assistants.get(i).start();
 		}
 		
-		try {
+		while (professor.isAlive())  {
+			try {
 			professor.join();
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		System.out.println((System.currentTimeMillis() - start) / 1000);
 	}
 	
 	public static void main(String[] args) {
-		new Start();
+		for (int i = 0; i < 1000; i ++){
+			new Start();
+		}
 	}
 }

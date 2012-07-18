@@ -8,6 +8,8 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+import assistant.Assistant;
+
 public class ExamStack {
 
 	//examstack
@@ -49,6 +51,7 @@ public class ExamStack {
 			lock.unlock();
 		}
 	}
+	
 	/**
 	 * entfernt das erste element aus dem stack und gibt es zurück
 	 * @return das erste element des stacks
@@ -62,11 +65,10 @@ public class ExamStack {
 			while (stack.isEmpty()) {
 				empty.await();
 			}
-			ex = stack.poll();
+			return stack.poll();
 		} finally {
 			lock.unlock();
 		}
-			return ex;
 	}
 
 	public List<Exam> tail() {
@@ -75,9 +77,14 @@ public class ExamStack {
 			if (stack.size() > 1) {
 				List<Exam> result = new LinkedList<Exam>();
 				while (stack.size() > 1) {
-					Exam ex = stack.poll();
-					if (ex != null) {
-						result.add(ex);
+					lock.lock();
+					try {
+						Exam ex = stack.poll();
+						if (ex != null) {
+							result.add(ex);
+						}
+					} finally {
+						lock.unlock();
 					}
 				}
 				return result;
@@ -102,5 +109,27 @@ public class ExamStack {
 	 */
 	public boolean isEmpty() {
 		return stack.isEmpty();
+	}
+	
+	/**
+	 * entfernt das erste element aus dem stack und gibt es zurück
+	 * braucht den {@link Assistant} um checked auf false zu setzen
+	 * 
+	 * @return das erste element des stacks
+	 * @throws InterruptedException wenn der aufrufene thread während des wartens unterbrochen wird
+	 */
+	public Exam dequeue(Assistant assistant) throws InterruptedException {
+		Exam ex = null;
+		try {
+			lock.lock();
+			//wenn kein element im stack ist warten
+			while (stack.isEmpty()) {
+				empty.await();
+			}
+			assistant.setChecked(false);
+			return stack.poll();
+		} finally {
+			lock.unlock();
+		}
 	}
 }

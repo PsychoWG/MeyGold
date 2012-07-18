@@ -17,8 +17,8 @@ public class Assistant extends Thread {
 	private CyclicBarrier barrier;
 
 	private int exercise;
-	private boolean working;
-	private boolean checked = false;
+	private volatile boolean working;
+	private volatile boolean checked = false;
 
 	/**
 	 * Erstellt einen neuen Assistenten. <br />
@@ -70,9 +70,8 @@ public class Assistant extends Thread {
 	private void correct() throws InterruptedException {
 		Exam examToCorrect = null;
 		working = false;
-		examToCorrect = stackTODO.dequeue();
+		examToCorrect = stackTODO.dequeue(this);
 		checked = false;
-		working = true;
 		if (examToCorrect != null) {
 			examToCorrect.correct(exercise);
 			if (examToCorrect.getState().equals(ExamState.CORRECTED)) {
@@ -81,6 +80,7 @@ public class Assistant extends Thread {
 				stackPASSON.enqueue(examToCorrect);
 			}
 		}
+		working = true;
 	}
 
 	public boolean isWorking() {

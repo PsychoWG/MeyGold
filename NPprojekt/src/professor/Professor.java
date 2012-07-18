@@ -60,19 +60,20 @@ public class Professor extends Thread {
 			}
 		}
 		if (!checkAll) {
+			System.out.println("Return 1");
 			return gotWork;
 		}
 		
 		boolean reallyRdy = true;
 		for (int i = assistants.size(); i > 0; i--) {
 			Assistant assistant = assistants.get(i-1);
-			boolean current = assistant.isChecked();
-			if (!current) {
+			if (assistant.getStackTODO().size() > 0 || !assistant.isChecked()) {
 				reallyRdy = false;
 			}
 			assistant.setChecked(false);
 		}
-		if (!reallyRdy) {
+		if (!reallyRdy || !stackcorrected.isEmpty()) {
+			System.out.println("Return 2");
 			return gotWork;
 		}
 		int i = 0;
