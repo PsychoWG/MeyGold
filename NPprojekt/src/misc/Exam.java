@@ -140,6 +140,7 @@ public class Exam {
 	/**
 	 * final correction for this exam
 	 * this method is called by the professor to finish the exam
+	 * state -> FINISHED
 	 */
 	public void finish() {
 		 Exam.do_finish(); // Beansprucht Prozessorleistung und
