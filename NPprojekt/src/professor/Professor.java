@@ -60,9 +60,13 @@ public class Professor extends Thread {
 //					waitForWork = !startShuffling();
 //				} else {
 					startShuffling();
-					examToFinish = stackcorrected.dequeue();
-					if (examToFinish != null) {
-						finishExam(examToFinish);
+					if (!isInterrupted()) {
+						examToFinish = stackcorrected.dequeue();
+						if (examToFinish != null) {
+							finishExam(examToFinish);
+						}
+					} else {
+						break;
 					}
 //				}
 //				if (waitForWork) {

@@ -42,9 +42,9 @@ public class ExamStack {
 	 */
 	public void enqueue(Exam e) {
 			stack.add(e);
-			//signal: stack not empty anymore
 		try {
 			lock.lock();
+			//signal: stack not empty anymore
 			empty.signalAll();
 		} finally {
 			lock.unlock();
@@ -76,7 +76,10 @@ public class ExamStack {
 			if (stack.size() > 1) {
 				List<Exam> result = new LinkedList<Exam>();
 				while (stack.size() > 1) {
-					result.add(stack.poll());
+					Exam ex = stack.poll();
+					if (ex != null) {
+						result.add(ex);
+					}
 				}
 				return result;
 			} else {
