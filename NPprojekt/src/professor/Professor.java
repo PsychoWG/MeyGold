@@ -23,6 +23,9 @@ public class Professor extends Thread {
 	}
 
 	public boolean checkAssistantsForWork() {
+		if (!stackcorrected.isEmpty()) {
+			return true;
+		}
 		boolean gotWork = true;
 		boolean checkAll = true;
 		for (int i = assistants.size(); i > 0; i--) {

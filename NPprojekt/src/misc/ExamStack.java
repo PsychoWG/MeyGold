@@ -3,6 +3,8 @@ package misc;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -10,7 +12,7 @@ import java.util.concurrent.locks.ReentrantLock;
 public class ExamStack {
 
 	//examstack
-	protected LinkedList<Exam> stack;
+	protected ConcurrentLinkedQueue<Exam> stack;
 
 	//lock for examstack
 	private Lock lock = new ReentrantLock();
@@ -21,7 +23,7 @@ public class ExamStack {
 	 * creates a new empty exam stack 
 	 */
 	public ExamStack() {
-		stack = new LinkedList<Exam>();
+		stack = new ConcurrentLinkedQueue<Exam>();
 	}
 
 	/**
@@ -29,7 +31,7 @@ public class ExamStack {
 	 * @param exams the exams to add to the stack
 	 */
 	public ExamStack(Collection<Exam> exams) {
-		stack = new LinkedList<Exam>();
+		stack = new ConcurrentLinkedQueue<Exam>();
 		stack.addAll(exams);
 	}
 
@@ -39,10 +41,10 @@ public class ExamStack {
 	 * @param e the element to add
 	 */
 	public void enqueue(Exam e) {
+			stack.add(e);
+			//signal: stack not empty anymore
 		try {
 			lock.lock();
-			stack.addLast(e);
-			//signal: stack not empty anymore
 			empty.signalAll();
 		} finally {
 			lock.unlock();
@@ -61,7 +63,7 @@ public class ExamStack {
 			while (stack.isEmpty()) {
 				empty.await();
 			}
-			ex = stack.removeFirst();
+			ex = stack.poll();
 		} finally {
 			lock.unlock();
 		}
@@ -69,20 +71,20 @@ public class ExamStack {
 	}
 
 	public List<Exam> tail() {
-		try {
-			lock.lock();
+//		try {
+//			lock.lock();
 			if (stack.size() > 1) {
 				List<Exam> result = new LinkedList<Exam>();
 				while (stack.size() > 1) {
-					result.add(stack.removeLast());
+					result.add(stack.poll());
 				}
 				return result;
 			} else {
 				return null;
 			}
-		} finally {
-			lock.unlock();
-		}
+//		} finally {
+//			lock.unlock();
+//		}
 	}
 	/**
 	 * 
