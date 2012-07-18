@@ -1,11 +1,11 @@
 package professor;
 
 import java.util.LinkedList;
-import java.util.Map;
 
 import main.Start;
 import misc.Exam;
 import misc.ExamStack;
+import misc.ExamState;
 import assistant.Assistant;
 
 public class Professor extends Thread {
@@ -14,8 +14,7 @@ public class Professor extends Thread {
 	private final ExamStack stackfinished;
 	private LinkedList<Assistant> assistants;
 
-	private Boolean wantShuffle = false;
-	private Boolean shuffling = false;
+
 
 	public Professor(ExamStack corrected, ExamStack finished,
 			LinkedList<Assistant> assistants) {
@@ -57,6 +56,9 @@ public class Professor extends Thread {
 	}
 
 	private void finishExam(Exam exam) {
+		if (exam.getState().equals(ExamState.IN_PROGRES)) {
+			throw new IllegalStateException();
+		}
 		exam.finish();
 		stackfinished.enqueue(exam);
 		System.out.println(stackfinished.size());

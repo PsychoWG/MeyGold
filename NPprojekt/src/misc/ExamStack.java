@@ -11,8 +11,7 @@ public class ExamStack {
 	private LinkedList<Exam> stack;
 
 	private Lock lock = new ReentrantLock();
-	private Condition cond = lock.newCondition();
-	private Condition wait = lock.newCondition();
+	private Condition empty = lock.newCondition();
 
 	public ExamStack() {
 		stack = new LinkedList<Exam>();
@@ -27,7 +26,7 @@ public class ExamStack {
 		try {
 			lock.lock();
 			stack.addLast(e);
-			wait.signalAll();
+			empty.signalAll();
 		} finally {
 			lock.unlock();
 		}
@@ -37,7 +36,7 @@ public class ExamStack {
 		try {
 			lock.lock();
 			while (stack.isEmpty()) {
-				wait.await();
+				empty.await();
 			}
 			Exam ex = stack.removeFirst();
 			return ex;
