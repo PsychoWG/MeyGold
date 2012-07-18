@@ -18,6 +18,7 @@ public class Assistant extends Thread {
 
 	private int exercise;
 	private boolean working;
+	private boolean checked = false;
 
 	/**
 	 * Erstellt einen neuen Assistenten. <br />
@@ -105,5 +106,19 @@ public class Assistant extends Thread {
 				break;
 			}
 		}
+	}
+
+	/**
+	 * @return the checked
+	 */
+	public boolean isChecked() {
+		return checked;
+	}
+
+	/**
+	 * @param checked the checked to set
+	 */
+	public void setChecked(boolean checked) {
+		this.checked = checked;
 	}
 }
