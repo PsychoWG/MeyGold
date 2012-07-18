@@ -29,7 +29,7 @@ public class Professor extends Thread {
 		for (Assistant assistant : assistants) {
 			assistant.interrupt();
 			System.out.println("Assistent[" + i 
-					+ "] wird freundlichst gebeten, sich zu terminieren!");
+					+ "] stop working!");
 			i++;
 		}
 	}
@@ -41,14 +41,13 @@ public class Professor extends Thread {
 			try {
 				examToFinish = stackcorrected.dequeue();
 			finishExam(examToFinish);
-			System.out.println("finished");
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
 		checkForFeierabend();
-		System.out.println("FEIERABEND!");
+		System.out.println("Professor stop working");
 	}
 
 	private void startShuffling() {
@@ -62,7 +61,7 @@ public class Professor extends Thread {
 		}
 		exam.finish();
 		stackfinished.enqueue(exam);
-		System.out.println(stackfinished.size());
+		System.out.println("Exam finished! " + stackfinished.size());
 	}
 
 }

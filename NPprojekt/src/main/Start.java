@@ -1,6 +1,7 @@
 package main;
 
 import java.util.LinkedList;
+import java.util.concurrent.CyclicBarrier;
 
 import misc.Exam;
 import misc.ExamStack;
@@ -25,9 +26,11 @@ public class Start {
 		ExamStack corrected = new ExamStack();
 		ExamStack finished = new ExamStack();
 		
+		CyclicBarrier barrier = new CyclicBarrier(NUM_ASSISTANTS);
+		
 		LinkedList<Assistant> assistants = new LinkedList<Assistant>();
 		for (int i = 0; i < NUM_ASSISTANTS; i ++) {
-			assistants.add(new Assistant(stacks[i % NUM_ASSISTANTS], stacks[(i+1) % NUM_ASSISTANTS], corrected, i));
+			assistants.add(new Assistant(barrier, stacks[i % NUM_ASSISTANTS], stacks[(i+1) % NUM_ASSISTANTS], corrected, i));
 		}
 		
 		Professor professor = new Professor(corrected, finished, assistants);

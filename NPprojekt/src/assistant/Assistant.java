@@ -1,5 +1,8 @@
 package assistant;
 
+import java.util.concurrent.BrokenBarrierException;
+import java.util.concurrent.CyclicBarrier;
+
 import misc.Exam;
 import misc.ExamStack;
 import misc.ExamState;
@@ -9,16 +12,18 @@ public class Assistant extends Thread {
 	private ExamStack stackTODO;
 	private ExamStack stackPASSON;
 	private ExamStack stackCorrected;
+	private CyclicBarrier barrier;
 
 	private int exercise;
 
-	public Assistant(ExamStack toDO, ExamStack passON, ExamStack corrected,
+	public Assistant(CyclicBarrier barrier, ExamStack toDO, ExamStack passON, ExamStack corrected,
 			int exercise) {
 		setName("Assistent " + exercise);
 		this.stackTODO = toDO;
 		this.stackPASSON = passON;
 		this.stackCorrected = corrected;
 		this.exercise = exercise;
+		this.barrier = barrier;
 	}
 
 	public boolean gotWork() {
@@ -56,7 +61,14 @@ public class Assistant extends Thread {
 
 	@Override
 	public void run() {
-		System.out.println(stackTODO.size());
+		try {
+			barrier.await();
+		} catch (InterruptedException e1) {
+			e1.printStackTrace();
+		} catch (BrokenBarrierException e1) {
+			e1.printStackTrace();
+		}
+		System.out.println("Assistent " + exercise + " starts working");
 		while (!(isInterrupted())) {
 			try {
 				correct();
@@ -66,6 +78,6 @@ public class Assistant extends Thread {
 			}
 		}
 		System.out
-				.println(Thread.currentThread().getName() + " Hausezeit!");
+				.println(Thread.currentThread().getName() + " finished!");
 	}
 }
