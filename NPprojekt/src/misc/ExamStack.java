@@ -72,7 +72,11 @@ public class ExamStack {
 		try {
 			lock.lock();
 			if (stack.size() > 1) {
-				return stack.subList(1, stack.size() - 1);
+				List<Exam> result = new LinkedList<Exam>();
+				while (stack.size() > 1) {
+					result.add(stack.removeLast());
+				}
+				return result;
 			} else {
 				return null;
 			}

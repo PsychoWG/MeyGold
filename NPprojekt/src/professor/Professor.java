@@ -1,6 +1,7 @@
 package professor;
 
 import java.util.LinkedList;
+import java.util.List;
 
 import misc.Exam;
 import misc.ExamStack;
@@ -81,12 +82,28 @@ public class Professor extends Thread {
 		if (!shuffling) {
 			return true;
 		} else {
+			shuffle();
 			System.out.println("Everyday I'm shuffling!");
 		}
 		
 		return false;
 	}
 
+	private void shuffle() {
+		LinkedList<Exam> toShuffle = new LinkedList<Exam>();
+		for (Assistant ass : assistants) {
+			List<Exam> current = ass.getStackTODO().tail();
+			if (current != null) {
+				toShuffle.addAll(current);
+			}
+		}
+		int counter = 0;
+		while (!toShuffle.isEmpty()) {
+			assistants.get(counter % assistants.size()).getStackTODO().enqueue(toShuffle.removeFirst());
+			counter++;
+		}
+	}
+	
 	private void finishExam(Exam exam) {
 		if (exam.getState().equals(ExamState.IN_PROGRES)) {
 			throw new IllegalStateException();
