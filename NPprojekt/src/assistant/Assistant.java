@@ -82,7 +82,7 @@ public class Assistant extends Thread {
 			try {
 				correct();
 			} catch (InterruptedException e) {
-				System.out.println(Thread.currentThread().getName()
+				System.out.println(getName()
 						+ " finished!");
 				break;
 			}

@@ -15,23 +15,31 @@ package misc;
 
 public class Exam {
 
+	//Exam states: IN_PROGRES initial state
+	//			   CORECTED all exercises corrected by assistants
+	//			   FINISHED all exercises corrected and corrected by professor
 	private ExamState state;
 
-	// false needs correction
+	// flag for each exercise
+	// false not corrected
 	// true corrected
-	private volatile boolean[] exercises;
+	private boolean[] exercises;
 
 	/*
 	 * Veraendert die Dauer der Methoden correct und finish
 	 */
 	private static final int scale_correct = 1000000;
 	private static final int scale_finish = 100000;
-
+	/**
+	 * Creates a new exam
+	 * 
+	 * @param exercises the number of exercises for this exam
+	 * 			according to the project description, the number of exercises 
+	 * 			is equal to the number of assistants
+	 */
 	public Exam(int exercises) {
 		state = ExamState.IN_PROGRES;
 		this.exercises = new boolean[exercises];
-//		primitive boolean sind default false
-//		Arrays.fill(this.exercises, false);
 	}
 
 	/*
@@ -87,11 +95,14 @@ public class Exam {
 		int i = Thread.currentThread().hashCode();
 		spend_time(i * (i + 12345), scale_finish);
 	}
-
+	/**
+	 * corrects an exercise of this exam
+	 * this method is called by assistants to correct their exercises 
+	 * 
+	 * @param exercise the exercise to correct
+	 */
 	public synchronized void correct(int exercise) {
-		if (state.equals(ExamState.CORRECTED)) {
-			throw new IllegalStateException();
-		}
+		//check if this exercise is already corrected
 		if (!exercises[exercise]) {
 			 Exam.do_correction(); // Beansprucht Prozessorleistung und
 			// Speicher. Dieser Aufruf muss
@@ -106,7 +117,10 @@ public class Exam {
 		}
 
 	}
-
+	/**
+	 * updates the state of this exam
+	 * if all exercises are corrected, the exam is corrected -> state CORRECTED
+	 */
 	public synchronized void updateExamState() {
 		for (boolean exercise : exercises) {
 			if (!exercise) {
@@ -116,10 +130,16 @@ public class Exam {
 		state = ExamState.CORRECTED;
 	}
 
+	/**
+	 * @return the current state of this exam
+	 */
 	public synchronized ExamState getState() {
 		return state;
 	}
-
+	/**
+	 * final correction for this exam
+	 * this method is called by the professor to finish the exam
+	 */
 	public void finish() {
 		 Exam.do_finish(); // Beansprucht Prozessorleistung und
 		// Speicher. Dieser Aufruf muss

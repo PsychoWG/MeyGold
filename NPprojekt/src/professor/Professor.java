@@ -2,7 +2,6 @@ package professor;
 
 import java.util.LinkedList;
 
-import main.Start;
 import misc.Exam;
 import misc.ExamStack;
 import misc.ExamState;
@@ -52,7 +51,6 @@ public class Professor extends Thread {
 					finishExam(examToFinish);
 				}
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
