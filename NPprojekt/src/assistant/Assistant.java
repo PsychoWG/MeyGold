@@ -57,7 +57,7 @@ public class Assistant extends Thread {
 	@Override
 	public void run() {
 		System.out.println(stackTODO.size());
-		while (!(Thread.interrupted())) {
+		while (!(isInterrupted())) {
 			try {
 				correct();
 			} catch (InterruptedException e) {
@@ -65,8 +65,7 @@ public class Assistant extends Thread {
 				break;
 			}
 		}
-		System.out.println(stackTODO.size());
 		System.out
-				.println("Feierabend f�r " + Thread.currentThread().getName());
+				.println(Thread.currentThread().getName() + " Hausezeit!");
 	}
 }

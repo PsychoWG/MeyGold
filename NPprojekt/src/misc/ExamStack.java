@@ -32,7 +32,7 @@ public class ExamStack {
 		}
 	}
 
-	public Exam dequeue() {
+	public Exam dequeue() throws InterruptedException {
 		try {
 			lock.lock();
 			while (stack.isEmpty()) {
@@ -40,8 +40,6 @@ public class ExamStack {
 			}
 			Exam ex = stack.removeFirst();
 			return ex;
-		} catch (InterruptedException e) {
-			return null;
 		} finally {
 			lock.unlock();
 		}

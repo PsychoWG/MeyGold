@@ -89,6 +89,9 @@ public class Exam {
 	}
 
 	public synchronized void correct(int exercise) {
+		if (state.equals(ExamState.CORRECTED)) {
+			throw new IllegalStateException();
+		}
 		if (!exercises[exercise]) {
 			 Exam.do_correction(); // Beansprucht Prozessorleistung und
 			// Speicher. Dieser Aufruf muss
@@ -125,14 +128,5 @@ public class Exam {
 		// jedoch beliebigen Programmcode davor
 		// und danach einfuegen.
 		state = ExamState.FINISHED;
-	}
-	
-	public static void main(String[] args) {
-		for(int i = 0; i < Integer.MAX_VALUE; i++) {
-			int n = (i * (i + 12345));
-			if (2 >= (xorShift(n)) % scale_correct) {
-				System.out.println(i);
-			}
-		}
 	}
 }

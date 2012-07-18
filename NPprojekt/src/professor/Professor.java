@@ -14,8 +14,6 @@ public class Professor extends Thread {
 	private final ExamStack stackfinished;
 	private LinkedList<Assistant> assistants;
 
-
-
 	public Professor(ExamStack corrected, ExamStack finished,
 			LinkedList<Assistant> assistants) {
 		setName("Professor");
@@ -27,24 +25,27 @@ public class Professor extends Thread {
 	// TODO implement CheckAll for b)
 
 	public void checkForFeierabend() {
-		for (int i = 0; i < Start.NUM_ASSISTANTS; i++) {
-			Assistant current = assistants.get(i);
-			synchronized (current) {
-				current.interrupt();
-				current.notifyAll();
-				System.out.println("Thread[" + i
-						+ "] wird freundlichst gebeten, sich zu terminieren!");
-			}
+		int i = 0;
+		for (Assistant assistant : assistants) {
+			assistant.interrupt();
+			System.out.println("Assistent[" + i 
+					+ "] wird freundlichst gebeten, sich zu terminieren!");
+			i++;
 		}
 	}
 
 	@Override
 	public void run() {
 		while (stackfinished.size() != Start.NUM_EXAMS) {
-			Exam examToFinish = stackcorrected.dequeue();
+			Exam examToFinish = null;
+			try {
+				examToFinish = stackcorrected.dequeue();
 			finishExam(examToFinish);
-			stackfinished.enqueue(examToFinish);
 			System.out.println("finished");
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		checkForFeierabend();
 		System.out.println("FEIERABEND!");
