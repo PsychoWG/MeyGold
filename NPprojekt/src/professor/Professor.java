@@ -41,7 +41,6 @@ public class Professor extends Thread {
 			try {
 				examToFinish = stackcorrected.dequeue();
 			finishExam(examToFinish);
-			System.out.println("finished");
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -62,7 +61,7 @@ public class Professor extends Thread {
 		}
 		exam.finish();
 		stackfinished.enqueue(exam);
-		System.out.println(stackfinished.size());
+		System.out.println("finished " + stackfinished.size());
 	}
 
 }

@@ -12,6 +12,8 @@ public class ExamStack {
 
 	private Lock lock = new ReentrantLock();
 	private Condition empty = lock.newCondition();
+	private Lock tailingLock = new ReentrantLock();
+	private Condition isTailing = tailingLock.newCondition();
 
 	public ExamStack() {
 		stack = new LinkedList<Exam>();
@@ -33,16 +35,17 @@ public class ExamStack {
 	}
 
 	public Exam dequeue() throws InterruptedException {
+		Exam ex = null;
 		try {
 			lock.lock();
 			while (stack.isEmpty()) {
 				empty.await();
 			}
-			Exam ex = stack.removeFirst();
-			return ex;
+			ex = stack.removeFirst();
 		} finally {
 			lock.unlock();
 		}
+			return ex;
 	}
 
 	public LinkedList<Exam> tail() {
