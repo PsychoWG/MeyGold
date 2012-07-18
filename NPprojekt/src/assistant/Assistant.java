@@ -3,6 +3,8 @@ package assistant;
 import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CyclicBarrier;
 
+import professor.Professor;
+
 import misc.Exam;
 import misc.ExamStack;
 import misc.ExamState;
@@ -17,6 +19,20 @@ public class Assistant extends Thread {
 	private int exercise;
 	private boolean working;
 
+	/**
+	 * Erstellt einen neuen Assistenten. <br />
+	 * Dieser benoetigt zwei {@link ExamStack}, einer zum runternehmen
+	 * und einer zum drauflegen. <br />
+	 * Ausserdem muss er wissen, wo der {@link ExamStack} des {@link Professor}
+	 * liegt, um dort vollstaendig korrigiert {@link Exam} draufzulegen.
+	 * Die {@link CyclicBarrier} dient zum Synchronstart. 
+	 * 
+	 * @param barrier - Gibt das Startsignal
+	 * @param toDO - zum Runternehmen
+	 * @param passON - zum Drauflegen
+	 * @param corrected - zum Weglegen korrigierter
+	 * @param exercise - zu bearbeitende Aufgabe
+	 */
 	public Assistant(CyclicBarrier barrier, ExamStack toDO, ExamStack passON,
 			ExamStack corrected, int exercise) {
 		setName("Assistent " + exercise);
@@ -26,10 +42,6 @@ public class Assistant extends Thread {
 		this.exercise = exercise;
 		this.barrier = barrier;
 		working = true;
-	}
-
-	public boolean gotWork() {
-		return stackTODO.size() > 0;
 	}
 
 	public ExamStack getStackTODO() {
@@ -48,6 +60,12 @@ public class Assistant extends Thread {
 		this.stackPASSON = stackPASSON;
 	}
 
+	/**
+	 * Nimmt die naechste {@link Exam} von stackTODO, schaut nach, ob diese
+	 * schon korrigiert ist, wenn nein, korrigiert er seine Aufgabe, ansonsten
+	 * legt er sie auf des {@link ExamStack} des {@link Professor}
+	 * @throws InterruptedException
+	 */
 	private void correct() throws InterruptedException {
 		Exam examToCorrect = null;
 		working = false;

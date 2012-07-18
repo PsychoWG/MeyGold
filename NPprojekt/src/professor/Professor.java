@@ -14,6 +14,14 @@ public class Professor extends Thread {
 	private final ExamStack stackfinished;
 	private LinkedList<Assistant> assistants;
 
+	/**
+	 * Erstellt einen Professor, der in der Lage ist, Klausuren fertig
+	 * zu korrigieren, auf Beendigung zu checken und das Ende auszurufen.
+	 * 
+	 * @param corrected - Der ToDo-{@link ExamStack} des Professors
+	 * @param finished - Die fertigen {@link Exam}
+	 * @param assistants - Eine Liste der {@link Assistant}
+	 */
 	public Professor(ExamStack corrected, ExamStack finished,
 			LinkedList<Assistant> assistants) {
 		setName("Professor");
@@ -22,6 +30,19 @@ public class Professor extends Thread {
 		this.assistants = assistants;
 	}
 
+	/**
+	 * Ueberprueft, ob noch alle arbeiten.
+	 * 
+	 * Falls alle {@link Assistant}en nicht arbeiten und der ToDo-{@link ExamStack}
+	 * des Professors nicht leer ist, prueft diese Methode zusaetzlich, ob ueberhaupt
+	 * noch Klausuren nicht auf dem "Finished"-{@link ExamStack} liegen. Findet er keine mehr,
+	 * so ruft der Professor das Ende auf.
+	 * 
+	 * @return	boolean <br />Gibt <u>sofort</u> true zurueck, wenn der Professor
+	 * 								selbst noch arbeiten kann. <br />
+	 * 			Gibt false zurueck, wenn nur ein Assistent
+	 * 							nicht arbeiten, true ansonsten.
+	 */
 	public boolean checkAssistantsForWork() {
 		if (!stackcorrected.isEmpty()) {
 			return true;
@@ -55,10 +76,6 @@ public class Professor extends Thread {
 		while (!isInterrupted()) {
 			Exam examToFinish = null;
 			try {
-//				boolean waitForWork = false;
-//				if (stackcorrected.isEmpty()) {
-//					waitForWork = !startShuffling();
-//				} else {
 					startShuffling();
 					if (!isInterrupted()) {
 						examToFinish = stackcorrected.dequeue();
@@ -68,22 +85,20 @@ public class Professor extends Thread {
 					} else {
 						break;
 					}
-//				}
-//				if (waitForWork) {
-//					if (isInterrupted()) {
-//						break;
-//					}
-//					examToFinish = stackcorrected.dequeue();
-//					finishExam(examToFinish);
-//				}
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				break;
+				e.printStackTrace();
 			}
 		}
 		System.out.println("Professor stop working");
 	}
 
+	/**
+	 * Schaut nach den {@link Assistant}en.
+	 * Wenn alle noch Arbeit haben, wird nichts getan.
+	 * Ansonsten holt der {@link Professor} sich alle Klausuren bis auf die oberste
+	 * von jedem ToDo-Stack eines jeden Assistenten und verteilt sie uniform gleich.
+	 * @return
+	 */
 	private boolean startShuffling() {
 		boolean shuffling = !checkAssistantsForWork();
 		if (!shuffling) {
@@ -96,6 +111,11 @@ public class Professor extends Thread {
 		return false;
 	}
 
+	/**
+	 * Die eigentliche Umverteilungsmethode.
+	 * Verteilt alle {@link Exam} der Tails aller {@link ExamStack}
+	 * uniform gleich unter allen {@link Assistant}
+	 */
 	private void shuffle() {
 		LinkedList<Exam> toShuffle = new LinkedList<Exam>();
 		for (Assistant ass : assistants) {
@@ -111,8 +131,17 @@ public class Professor extends Thread {
 		}
 	}
 	
+	/**
+	 * Fuehrt die finale Korrektur durch.
+	 * Akzeptiert nur Klausuren mit {@link ExamState}.CORRECTED
+	 * ansonsten wird eine {@link IllegalStateException} geworfen.
+	 * 
+	 * @param exam
+	 * @throws IllegalStateException <br /> {@link Exam} hatte nicht
+	 * 					den {@link ExamState}.CORRECTED
+	 */
 	private void finishExam(Exam exam) {
-		if (exam.getState().equals(ExamState.IN_PROGRES)) {
+		if (!exam.getState().equals(ExamState.CORRECTED)) {
 			throw new IllegalStateException();
 		}
 		exam.finish();
