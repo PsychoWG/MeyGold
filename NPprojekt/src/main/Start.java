@@ -3,7 +3,6 @@ package main;
 import java.util.LinkedList;
 import java.util.concurrent.CyclicBarrier;
 
-import misc.CorrectedStack;
 import misc.Exam;
 import misc.ExamStack;
 import misc.FinishedStack;
