@@ -51,24 +51,26 @@ public class Professor extends Thread {
 		while (!isInterrupted()) {
 			Exam examToFinish = null;
 			try {
-				boolean waitForWork = false;
-				if (stackcorrected.isEmpty()) {
-					waitForWork = !startShuffling();
-				} else {
-					examToFinish = stackcorrected.dequeue();
-					finishExam(examToFinish);
+//				boolean waitForWork = false;
+//				if (stackcorrected.isEmpty()) {
+//					waitForWork = !startShuffling();
+//				} else {
 					startShuffling();
-				}
-				if (waitForWork) {
-					if (isInterrupted()) {
-						break;
-					}
 					examToFinish = stackcorrected.dequeue();
-					finishExam(examToFinish);
-				}
+					if (examToFinish != null) {
+						finishExam(examToFinish);
+					}
+//				}
+//				if (waitForWork) {
+//					if (isInterrupted()) {
+//						break;
+//					}
+//					examToFinish = stackcorrected.dequeue();
+//					finishExam(examToFinish);
+//				}
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+				break;
 			}
 		}
 		System.out.println("Professor stop working");

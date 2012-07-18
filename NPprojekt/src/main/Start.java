@@ -3,8 +3,10 @@ package main;
 import java.util.LinkedList;
 import java.util.concurrent.CyclicBarrier;
 
+import misc.CorrectedStack;
 import misc.Exam;
 import misc.ExamStack;
+import misc.FinishedStack;
 import professor.Professor;
 import assistant.Assistant;
 
@@ -26,7 +28,7 @@ public class Start {
 			stacks[i] = current;
 		}
 		ExamStack corrected = new ExamStack();
-		ExamStack finished = new ExamStack();
+		ExamStack finished = new FinishedStack();
 		
 		CyclicBarrier barrier = new CyclicBarrier(NUM_ASSISTANTS);
 		
