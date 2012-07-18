@@ -56,6 +56,7 @@ public class Assistant extends Thread {
 
 	@Override
 	public void run() {
+		System.out.println(stackTODO.size());
 		while (!(Thread.interrupted())) {
 			try {
 				correct();
