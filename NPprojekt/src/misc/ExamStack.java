@@ -2,6 +2,7 @@ package misc;
 
 import java.util.Collection;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -33,20 +34,30 @@ public class ExamStack {
 	}
 
 	public Exam dequeue() throws InterruptedException {
+		Exam ex = null;
 		try {
 			lock.lock();
 			while (stack.isEmpty()) {
 				empty.await();
 			}
-			Exam ex = stack.removeFirst();
-			return ex;
+			ex = stack.removeFirst();
 		} finally {
 			lock.unlock();
 		}
+			return ex;
 	}
 
-	public LinkedList<Exam> tail() {
-		return null;
+	public List<Exam> tail() {
+		try {
+			lock.lock();
+			if (stack.size() > 1) {
+				return stack.subList(1, stack.size() - 1);
+			} else {
+				return null;
+			}
+		} finally {
+			lock.unlock();
+		}
 	}
 
 	public int size() {

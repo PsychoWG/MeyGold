@@ -44,9 +44,14 @@ public class Professor extends Thread {
 		while (!isInterrupted()) {
 			Exam examToFinish = null;
 			try {
+				boolean waitForWork = false;
 				if (stackcorrected.isEmpty()) {
-					checkAssistants();
+					waitForWork = startShuffling();
 				} else {
+					examToFinish = stackcorrected.dequeue();
+					finishExam(examToFinish);
+				}
+				if (waitForWork) {
 					examToFinish = stackcorrected.dequeue();
 					finishExam(examToFinish);
 				}
@@ -54,12 +59,23 @@ public class Professor extends Thread {
 				e.printStackTrace();
 			}
 		}
-		System.out.println("Professor stop working");
+		checkAssistants();
+		System.out.println("FEIERABEND!");
 	}
 
-	private void startShuffling() {
-		// TODO Auto-generated method stub
-
+	private boolean startShuffling() {
+		boolean shuffling = false;
+		int workless = -1;
+		for (int i = assistants.size() - 1; i >=0; i--) {
+			shuffling = shuffling ? shuffling : !assistants.get(i).gotWork();
+		}
+		if (!shuffling) {
+			return !shuffling;
+		} else {
+			System.out.println("Everyday I'm shuffling!");
+		}
+		
+		return true;
 	}
 
 	private void finishExam(Exam exam) {

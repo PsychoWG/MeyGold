@@ -70,6 +70,7 @@ public class Exam {
 	 * Rechenleistung verschwenden! (DO NOT CHANGE THIS METHOD)
 	 */
 	private static boolean spend_time(int n, int s) {
+//		return true;
 		int y = (xorShift(n)) % s;
 		int test = 0;
 

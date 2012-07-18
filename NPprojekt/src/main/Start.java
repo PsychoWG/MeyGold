@@ -10,8 +10,9 @@ import assistant.Assistant;
 
 public class Start {
 	
-	public static final int NUM_ASSISTANTS = 8;
+	public static final int NUM_ASSISTANTS = 2;
 	public static final int NUM_EXAMS = 800;
+	public static final int NUM_RUNS = 10;
 	// TROLOLOLOLOLOOLOLOOLOLOLOLOL
 	
 	public Start() {
@@ -21,6 +22,7 @@ public class Start {
 			for (int n = 0; n < NUM_EXAMS/NUM_ASSISTANTS; n++) {
 				current.enqueue(new Exam(NUM_ASSISTANTS));
 			}
+
 			stacks[i] = current;
 		}
 		ExamStack corrected = new ExamStack();
