@@ -12,10 +12,10 @@ import assistant.Assistant;
 public class Start {
 	
 	public static final int NUM_ASSISTANTS = 2;
-	public static final int NUM_EXAMS = 1000;
+	public static final int NUM_EXAMS = 800;
 	
 	public Start() {
-		long start = System.nanoTime();
+		long start = System.currentTimeMillis();
 		
 		// erstelle Klausuren und lege die Stoesse aus
 		ExamStack[] stacks = new ExamStack[NUM_ASSISTANTS];
@@ -55,7 +55,7 @@ public class Start {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		System.out.println((System.nanoTime() - start) / 100000000);
+		System.out.println((System.currentTimeMillis() - start) / 1000);
 	}
 	
 	public static void main(String[] args) {
